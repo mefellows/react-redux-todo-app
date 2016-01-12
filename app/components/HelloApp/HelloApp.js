@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import bucky from 'bucky';
 
 import * as TodoActions from 'actions/TodoActions';
 
@@ -14,6 +15,7 @@ const ENTER_KEY = 13;
 class HelloApp extends React.Component {
   constructor(props) {
     super(props);
+    bucky.send('helloapp.constructor', 2432.43434);
 
     this.state = {
       filterType: 'all'

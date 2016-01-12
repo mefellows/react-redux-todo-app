@@ -58,6 +58,9 @@ fi
 if [ $EXISTS != true ]; then
   echo ">> Creating initial telegraf database"
   docker exec -i -t tick curl -G http://localhost:8086/query --data-urlencode "q=CREATE DATABASE telegraf"
+
+  echo ">> Creating host entry for Docker"
+  sudo node_modules/.bin/hostile set $HOST docker
 fi
 
 ## Starting Bucky
