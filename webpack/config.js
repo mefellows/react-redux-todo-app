@@ -42,6 +42,10 @@ var config = {
   module: {
     loaders: loaders
   },
+  node: {
+    'fs': 'empty',
+    'child_process': 'empty'
+  },
   postcss: [
     autoprefixer
   ],

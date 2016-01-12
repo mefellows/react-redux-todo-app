@@ -3,6 +3,8 @@ import _ from 'lodash';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import * as reducers from 'reducers';
+import bucky from 'bucky';
+import analytics from 'redux-analytics';
 
 export function arrayMiddleware() {
   return next =>
@@ -15,10 +17,19 @@ export function arrayMiddleware() {
       next(action);
     };
 }
+
+const track = ({ type, payload = {} }) => {
+  const { value = 1 } = payload;
+  const key = `mymetricnamespace.actions.${type}`;
+  bucky.count(key, value);
+};
+const analyticsMiddleware = analytics(track, ({ meta }) => meta.metrics);
+
 export default function (initialState) {
   const createStoreWithMiddleware = applyMiddleware(
     arrayMiddleware,
-    thunk
+    thunk,
+    analyticsMiddleware
   )(createStore);
 
   const reducer = combineReducers(reducers);

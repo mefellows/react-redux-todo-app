@@ -10,6 +10,16 @@ import App from 'components/App/App';
 
 import ReactDOM from 'react-dom';
 import React from 'react';
+import bucky from 'bucky';
+bucky
+  .setOptions({
+    host: 'http://docker:5000',
+    active: true,
+    sendLatency: true,
+    aggregationInterval: 2000
+  });
+
+bucky.sendPagePerformance(`myawesomemetrics.page`);
 
 ReactDOM.render(
   <App/>,

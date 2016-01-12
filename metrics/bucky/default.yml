@@ -1,0 +1,18 @@
+server:
+  port: 80
+  appRoot: ""
+
+statsd:
+  host: 'statsd'
+  port: 8125
+
+modules:
+  # The modules just get require'd in, so they don't have to be in the Bucky project.
+  app:
+    - ./modules/trustProxy
+    - ./modules/auth
+    - ./modules/collectors
+
+  collectors:
+    - ./modules/collectionLogger
+    - ./modules/statsd

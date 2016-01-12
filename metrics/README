@@ -1,0 +1,50 @@
+# Bucky Server
+
+Docker image to run a [BuckyServer](http://github.hubspot.com/BuckyServer/).
+
+## Usage
+
+Luckily for you, dear reader, I have created `./run.sh` in the root folder - just run that and you'll get what you desire.
+
+Should you want to run things manually, here you have it:
+
+```
+export VOLUME_CONTAINER_GUID=$(
+  docker create \
+    --name tick-data \
+    -v "/data/influx/data" \
+    -v "/data/influx/wal" \
+    -v "/data/influx/meta" \
+    -v "/data/kapacitor" \
+    -v "/data/chronograf" \
+    mefellows/tick \
+    /dev/null
+)
+
+docker run \
+  -d \
+  -p 8086:8086 \
+  -p 8125:8125/udp \
+  -p 10000:10000 \
+  --name tick \
+  --volumes-from $VOLUME_CONTAINER_GUID \
+  mefellows/tick
+docker exec -i -t tick curl -G http://localhost:8086/query --data-urlencode "q=CREATE DATABASE telegraf"
+docker exec -i -t tick bash # now you can do stuff
+```
+
+Now that we have our TICK stack, we can start Bucky - the Statsd Forwarder - and link it:
+
+```
+## Starting Bucky
+docker run \
+  --name bucky \
+  --link "tick:statsd" \
+  -d -p 5000:80 \
+  -v "$PWD/metrics/bucky/default.yml:/opt/BuckyServer/config/default.yml" \
+  mefellows/bucky:latest
+```
+
+All that is remaining is to run the React App.
+
+NOTE: Bucky is pre-configured to forward your metrics to a local TICK stack. Simply point your [Bucky Client](http://github.hubspot.com/bucky) (or even a Statsd client, although you get some extra stuff with the Bucky Client such as page performance and control over sampling and aggregation times) at our host and off you go!
